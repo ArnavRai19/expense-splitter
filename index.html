@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Split — Group Expense Splitter</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235B6EF5'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter,sans-serif' font-weight='700' font-size='18' fill='white'%3E%24%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,24 +12,24 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#060608;--surface:#0D0D12;--surface2:#13131A;--surface3:#1A1A24;
-  --border:#1E1E2E;--border-bright:#2A2A3E;
-  --text:#F0F0FF;--text-2:#6B7080;--text-3:#383848;
-  --accent:#5B6EF5;--accent2:#8B5CF6;--accent-glow:rgba(91,110,245,0.25);
-  --accent-light:#0D1030;--accent-text:#A5B4FC;
-  --green:#10B981;--green-light:#031510;--green-border:#064028;--green-text:#34D399;
-  --danger:#F43F5E;--danger-light:#1A0510;--danger-border:#5A0F20;
-  --warn:#F59E0B;--warn-light:#1A1000;
-  --purple:#8B5CF6;--pink:#EC4899;--teal:#14B8A6;
+  --bg:#F4F5FA;--surface:#FFFFFF;--surface2:#F0F1F7;--surface3:#E8EAF2;
+  --border:#DDE0EE;--border-bright:#C8CCE0;
+  --text:#1A1B2E;--text-2:#6B7280;--text-3:#A0A6B8;
+  --accent:#5B6EF5;--accent2:#8B5CF6;--accent-glow:rgba(91,110,245,0.18);
+  --accent-light:#EEF0FE;--accent-text:#4F5FD4;
+  --green:#059669;--green-light:#ECFDF5;--green-border:#A7F3D0;--green-text:#047857;
+  --danger:#E11D48;--danger-light:#FFF1F3;--danger-border:#FECDD3;
+  --warn:#D97706;--warn-light:#FFFBEB;
+  --purple:#8B5CF6;--pink:#EC4899;--teal:#0D9488;
   --radius:18px;--radius-sm:12px;--radius-xs:8px;
-  --shadow:0 4px 24px rgba(0,0,0,0.6);--shadow-lg:0 20px 60px rgba(0,0,0,0.8);
+  --shadow:0 2px 12px rgba(91,110,245,0.08);--shadow-lg:0 12px 40px rgba(91,110,245,0.14);
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(91,110,245,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(91,110,245,0.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
-body::after{content:'';position:fixed;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(91,110,245,0.07) 0%,transparent 70%);pointer-events:none;z-index:0}
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(91,110,245,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(91,110,245,0.05) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+body::after{content:'';position:fixed;top:-40%;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(91,110,245,0.05) 0%,transparent 70%);pointer-events:none;z-index:0}
 
 /* HEADER */
-.app-header{background:rgba(6,6,8,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.app-header{background:rgba(255,255,255,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--border);padding:.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .header-left{display:flex;align-items:center;gap:10px}
 .logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px var(--accent-glow);flex-shrink:0}
 .logo-mark svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
@@ -77,7 +78,7 @@ label{font-size:.68rem;font-weight:600;color:var(--text-2);letter-spacing:.08em;
 input,select{font-family:'Inter',sans-serif;font-size:.88rem;padding:.6rem .875rem;border:1.5px solid var(--border);border-radius:var(--radius-xs);background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;width:100%;-webkit-appearance:none}
 input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,110,245,.15)}
 input::placeholder{color:var(--text-3)}
-select option{background:#1A1A24}
+select option{background:#FFFFFF}
 
 /* BUTTONS */
 .btn{font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;padding:.6rem 1.1rem;border-radius:var(--radius-xs);border:none;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0}
@@ -281,7 +282,7 @@ select option{background:#1A1A24}
 /* MODALS */
 .modal-overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;animation:overlayIn .2s ease}
 @keyframes overlayIn{from{opacity:0}to{opacity:1}}
-.modal-overlay::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.modal-overlay::before{content:'';position:absolute;inset:0;background:rgba(30,30,60,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .modal{position:relative;z-index:1;background:var(--surface);border:1px solid var(--border-bright);border-radius:22px;max-width:460px;width:100%;box-shadow:var(--shadow-lg),0 0 80px rgba(91,110,245,.1);animation:modalIn .3s cubic-bezier(.34,1.2,.64,1);overflow:hidden}
 .modal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(91,110,245,.6),rgba(139,92,246,.6),transparent);pointer-events:none}
 @keyframes modalIn{from{opacity:0;transform:scale(.93) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
@@ -295,7 +296,7 @@ select option{background:#1A1A24}
 .modal-close:hover{background:var(--danger-light);color:var(--danger);border-color:var(--danger-border)}
 .modal-close svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .modal-body{padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:1rem}
-.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:1rem 1.5rem;border-top:1px solid var(--border);background:rgba(0,0,0,.2)}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:1rem 1.5rem;border-top:1px solid var(--border);background:var(--surface2)}
 
 /* SCAN MODAL SPECIFIC */
 .drop-zone{border:1.5px dashed rgba(91,110,245,.3);border-radius:var(--radius-sm);padding:2rem 1.5rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:rgba(91,110,245,.03)}
@@ -399,14 +400,10 @@ select option{background:#1A1A24}
     <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
     Expenses
   </button>
-  <button class="tab-btn" id="tab-receipts" onclick="switchTab('receipts')">
-    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    Receipt Wall
-    <span id="receipt-wall-count" class="badge-count" style="display:none;background:var(--pink);">0</span>
-  </button>
   <button class="tab-btn" id="tab-results" onclick="switchTab('results')">
     <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
     Results
+    <span id="results-ready-dot" style="display:none;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;"></span>
   </button>
 </div>
 
@@ -522,11 +519,6 @@ select option{background:#1A1A24}
       </div>
     </div>
 
-    <button class="btn-calculate" onclick="calculate()">
-      <svg viewBox="0 0 24 24"><path d="M9 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3"/><path d="M9 14h5l7-7-4-4-7 7v5"/></svg>
-      Calculate &amp; Settle Up
-    </button>
-
   </div>
 
   <!-- RECEIPT WALL TAB -->
@@ -576,18 +568,6 @@ select option{background:#1A1A24}
           <hr class="section-divider">
           <div id="results-list" class="results-list"></div>
 
-          <!-- WHAT IF SIMULATOR -->
-          <div class="whatif-section">
-            <hr class="section-divider">
-            <div class="whatif-header">
-              <div class="whatif-title">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                What If Simulator — toggle expenses on/off
-              </div>
-            </div>
-            <div id="whatif-list" class="whatif-list"></div>
-            <div id="whatif-result" class="whatif-result"></div>
-          </div>
         </div>
 
         <!-- BREAKDOWN -->
@@ -795,6 +775,7 @@ function loadSaved(){
       document.getElementById('custom-split-area').style.display='block';
       renderCustomInputs();
     }
+    if(people.length>=2&&expenses.length>0)calculate(true);
   }catch(e){console.warn('Load failed',e)}
 }
 
@@ -916,6 +897,7 @@ function addExpense(opts={}){
   }
   renderExpenses(true);
   autoSave();
+  calculate(true);
   showToast(isScanned?'📷 Receipt expense added!':'✓ Expense added','green','<polyline points="20 6 9 17 4 12"/>');
   return true;
 }
@@ -923,7 +905,7 @@ function removeExpense(id){
   const e=expenses.find(x=>x.id===id);
   if(e?.receiptId)delete currentReceipts[e.receiptId];
   expenses=expenses.filter(x=>x.id!==id);
-  renderExpenses(false);renderReceiptWall();autoSave();
+  renderExpenses(false);renderReceiptWall();autoSave();calculate(true);
 }
 function renderExpenses(animateLatest=false){
   const sym=getCurrency();
@@ -1180,9 +1162,14 @@ function parseVoiceInput(text){
 }
 
 // ─── CALCULATE ────────────────────────────────────────────────────────────────
-function calculate(){
-  if(people.length<2){alert('Add at least 2 people first.');return}
-  if(expenses.length===0){alert('Add at least one expense first.');return}
+function calculate(silent=false){
+  if(people.length<2||expenses.length===0){
+    // hide results if not enough data
+    document.getElementById('results-placeholder').style.display='';
+    document.getElementById('results-content').style.display='none';
+    document.getElementById('results-ready-dot').style.display='none';
+    return;
+  }
   const sym=getCurrency();
   const balances={};people.forEach(p=>{balances[p]=0});
   expenses.forEach(e=>{
@@ -1236,7 +1223,6 @@ function calculate(){
   }
 
   renderBreakdownCards(balances,sym);
-  renderWhatIf(sym);
   renderGroupChatSummary(transactions,sym);
 
   document.getElementById('results-placeholder').style.display='none';
@@ -1244,7 +1230,8 @@ function calculate(){
   breakdownOpen=false;
   document.getElementById('breakdown-toggle').classList.remove('open');
   document.getElementById('breakdown-grid').style.display='none';
-  switchTab('results');
+  document.getElementById('results-ready-dot').style.display='';
+  if(!silent)switchTab('results');
 }
 
 // ─── EXPENSE AUTOPSY ──────────────────────────────────────────────────────────
@@ -1295,49 +1282,6 @@ function toggleAutopsy(item,t,balances,sym){
     ${contributions.length>1?`<div class="autopsy-total"><span class="autopsy-total-label">Your total share</span><span class="autopsy-total-amt">${sym}${totalContrib.toFixed(2)}</span></div>`:''}
   `;
   el.classList.add('show');
-}
-
-// ─── WHAT IF SIMULATOR ────────────────────────────────────────────────────────
-let whatIfExcluded=new Set();
-function renderWhatIf(sym){
-  whatIfExcluded=new Set();
-  const list=document.getElementById('whatif-list');
-  list.innerHTML='';
-  expenses.forEach(e=>{
-    const item=document.createElement('div');item.className='whatif-item';
-    item.innerHTML=`
-      <input type="checkbox" checked onchange="toggleWhatIf(${e.id},'${sym}')">
-      <span class="whatif-item-desc">${e.desc}</span>
-      <span style="font-size:.72rem;color:var(--text-3);flex-shrink:0;">paid by ${e.payer} ·</span>
-      <span class="whatif-item-amt">${sym}${e.amount.toFixed(2)}</span>
-    `;
-    list.appendChild(item);
-  });
-  document.getElementById('whatif-result').classList.remove('show');
-}
-function toggleWhatIf(id,sym){
-  if(whatIfExcluded.has(id))whatIfExcluded.delete(id);else whatIfExcluded.add(id);
-  const item=document.querySelector(`.whatif-item input[onchange*="${id}"]`)?.parentElement;
-  if(item)item.classList.toggle('excluded',whatIfExcluded.has(id));
-  recalcWhatIf(sym);
-}
-function recalcWhatIf(sym){
-  const active=expenses.filter(e=>!whatIfExcluded.has(e.id));
-  if(whatIfExcluded.size===0){document.getElementById('whatif-result').classList.remove('show');return}
-  const balances={};people.forEach(p=>{balances[p]=0});
-  active.forEach(e=>{
-    balances[e.payer]=(balances[e.payer]||0)+e.amount;
-    Object.entries(e.shares).forEach(([p,s])=>{balances[p]=(balances[p]||0)-s});
-  });
-  const txns=simplifyDebts({...balances});
-  const result=document.getElementById('whatif-result');
-  if(txns.length===0){
-    result.innerHTML=`<span style="color:var(--green-text);font-weight:600;">✓ Everyone would be settled up!</span>`;
-  }else{
-    const lines=txns.map(t=>`<strong>${t.from}</strong> owes <strong>${t.to}</strong> ${sym}${t.amount.toFixed(2)}`).join(' · ');
-    result.innerHTML=`<span style="color:var(--text-2);font-size:.8rem;">Without those expenses: </span>${lines}`;
-  }
-  result.classList.add('show');
 }
 
 // ─── GROUP CHAT SUMMARY ───────────────────────────────────────────────────────
@@ -1469,7 +1413,7 @@ function simplifyDebts(balances){
 function confirmEndTrip(){document.getElementById('end-trip-modal').style.display='flex'}
 function closeEndModal(){document.getElementById('end-trip-modal').style.display='none'}
 function doEndTrip(){
-  people=[];expenses=[];splitMode='equal';currentReceipts={};whatIfExcluded=new Set();
+  people=[];expenses=[];splitMode='equal';currentReceipts={};
   ['trip-name','person-name','exp-desc','exp-amount'].forEach(id=>{document.getElementById(id).value=''});
   document.getElementById('currency').value='$';
   document.getElementById('exp-payer').value='';
