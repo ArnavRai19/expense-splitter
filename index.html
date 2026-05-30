@@ -1109,55 +1109,142 @@ function addScannedExpense(){
 }
 
 // ─── VOICE ENTRY ──────────────────────────────────────────────────────────────
+let voiceResultReceived=false;
+
 function toggleVoice(){
   if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){
-    showToast('Voice not supported in this browser. Try Chrome on mobile.','');return;
+    showToast('Voice not supported — try Chrome or Edge.','');return;
   }
   if(isListening){stopVoice();return}
+  startVoice();
+}
+
+function startVoice(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   recognition=new SR();
-  recognition.lang='en-US';recognition.interimResults=false;recognition.maxAlternatives=1;
+  recognition.lang='en-US';
+  recognition.interimResults=false;
+  recognition.maxAlternatives=3;
+  recognition.continuous=false;
+  voiceResultReceived=false;
+
   recognition.onstart=()=>{
     isListening=true;
     document.getElementById('voice-btn').classList.add('listening');
     document.getElementById('voice-status').classList.add('show');
     document.getElementById('voice-status-text').textContent='Listening… say "Alex paid 50 for dinner"';
   };
+
   recognition.onresult=(e)=>{
-    const transcript=e.results[0][0].transcript;
-    document.getElementById('voice-status-text').textContent=`Heard: "${transcript}"`;
-    parseVoiceInput(transcript);
-    stopVoice();
+    voiceResultReceived=true;
+    // try all alternatives, pick best parse
+    const transcripts=Array.from(e.results[0]).map(r=>r.transcript);
+    let best=null;
+    for(const t of transcripts){
+      const parsed=parseVoiceInput(t,true);
+      if(!best||(parsed.score>best.score)){best={...parsed,transcript:t}}
+    }
+    document.getElementById('voice-status-text').textContent=`Heard: "${best.transcript}"`;
+    applyVoiceParse(best);
+    resetVoiceUI(3000);
   };
-  recognition.onerror=()=>{
-    document.getElementById('voice-status-text').textContent='Could not hear clearly. Try again.';
-    stopVoice();
+
+  recognition.onerror=(e)=>{
+    voiceResultReceived=true; // prevent onend double-handling
+    const msgs={
+      'not-allowed':'Mic access denied — allow microphone in your browser settings.',
+      'no-speech':'Nothing heard — make sure your mic is on and try again.',
+      'audio-capture':'No microphone found — check your device.',
+      'network':'Network error — check your connection and try again.',
+      'aborted':'Cancelled.',
+      'service-not-allowed':'Speech service blocked — try a different browser.'
+    };
+    const msg=msgs[e.error]||`Error (${e.error}) — please try again.`;
+    document.getElementById('voice-status-text').textContent=msg;
+    document.getElementById('voice-btn').classList.remove('listening');
+    isListening=false;
+    recognition=null;
+    resetVoiceUI(4000);
   };
-  recognition.onend=()=>{stopVoice()};
-  recognition.start();
+
+  recognition.onend=()=>{
+    // only clean up if onerror / onresult didn't already handle it
+    if(!voiceResultReceived){
+      document.getElementById('voice-status-text').textContent='Nothing detected — tap mic and try again.';
+      resetVoiceUI(3000);
+    }
+    isListening=false;
+    document.getElementById('voice-btn').classList.remove('listening');
+    recognition=null;
+  };
+
+  try{
+    recognition.start();
+  }catch(err){
+    document.getElementById('voice-status').classList.add('show');
+    document.getElementById('voice-status-text').textContent='Could not start mic — try again.';
+    isListening=false;
+    recognition=null;
+    resetVoiceUI(3000);
+  }
 }
+
 function stopVoice(){
   isListening=false;
   document.getElementById('voice-btn').classList.remove('listening');
-  if(recognition){try{recognition.stop()}catch(e){}}
-  setTimeout(()=>document.getElementById('voice-status').classList.remove('show'),2000);
+  if(recognition){
+    try{recognition.abort()}catch(e){}
+    recognition=null;
+  }
+  resetVoiceUI(500);
 }
-function parseVoiceInput(text){
-  // Pattern: "[name] paid [amount] for [description]"
-  // or "[name] paid [amount] on [description]"
-  const amountMatch=text.match(/(\d+(?:\.\d{1,2})?)/);
-  const amount=amountMatch?parseFloat(amountMatch[1]):null;
+
+function resetVoiceUI(delay){
+  setTimeout(()=>document.getElementById('voice-status').classList.remove('show'),delay);
+}
+
+function parseVoiceInput(text,returnObj=false){
+  const lower=text.toLowerCase();
+
+  // Amount: find any number (with optional decimal)
+  const amountMatch=lower.match(/\b(\d+(?:[.,]\d{1,2})?)\b/);
+  const amount=amountMatch?parseFloat(amountMatch[1].replace(',','.')):null;
+
+  // Payer: match any person's name in the transcript
   let payer=null;
   for(const p of people){
-    if(text.toLowerCase().includes(p.toLowerCase())){payer=p;break}
+    if(lower.includes(p.toLowerCase())){payer=p;break}
   }
-  const descMatch=text.match(/(?:for|on)\s+(.+)/i);
-  const desc=descMatch?descMatch[1].trim():null;
-  if(amount){document.getElementById('exp-amount').value=amount.toFixed(2)}
-  if(payer){document.getElementById('exp-payer').value=payer}
-  if(desc){document.getElementById('exp-desc').value=desc}
+
+  // Description: try "for/on X", then fall back to words after the amount
+  let desc=null;
+  const forMatch=text.match(/\b(?:for|on|at)\s+(.+)/i);
+  if(forMatch){
+    // strip trailing filler words
+    desc=forMatch[1].replace(/\b(please|thanks|thank you|okay|ok)\b/gi,'').trim();
+  } else if(amountMatch){
+    // grab everything after the number as description
+    const afterAmount=text.slice(text.indexOf(amountMatch[0])+amountMatch[0].length).trim();
+    if(afterAmount.length>1)desc=afterAmount;
+  }
+
+  // clean up desc
+  if(desc)desc=desc.replace(/\s+/g,' ').trim();
+  if(desc&&desc.length<2)desc=null;
+
+  // score: how many fields we extracted
+  const score=(amount?1:0)+(payer?1:0)+(desc?1:0);
+
+  if(returnObj)return{amount,payer,desc,score};
+  applyVoiceParse({amount,payer,desc});
+}
+
+function applyVoiceParse({amount,payer,desc}){
+  if(amount)document.getElementById('exp-amount').value=amount.toFixed(2);
+  if(payer)document.getElementById('exp-payer').value=payer;
+  if(desc)document.getElementById('exp-desc').value=desc;
   if(amount||payer||desc){
-    showToast(`Voice: ${payer||'?'} · $${amount||'?'} · ${desc||'?'}`, 'blue', '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>');
+    showToast(`Voice: ${payer||'?'} · ${amount||'?'} · ${desc||'?'}`, 'blue', '<path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>');
   }
 }
 
